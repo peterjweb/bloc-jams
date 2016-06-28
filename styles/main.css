@@ -30,6 +30,15 @@ body {
     max-width: 64rem;
 }
 
+.clearfix::before, .clearfix::after {
+    content: " ";
+    display: table;
+}
+
+.clearfix::after {
+    clear: both;
+}
+
 @media (min-width: 640px) {
     html { font-size: 112%; }
     
