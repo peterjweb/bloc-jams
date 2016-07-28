@@ -86,17 +86,19 @@ var setCurrentAlbum = function(album) {
 };
 
 var findParentByClassName = function(element, targetClass) {
-	if (element) {
+	if (element.parentElement) {
+		
 		var currentParent = element.parentElement;
 		while (currentParent.className != targetClass && currentParent.className != null) {
 			currentParent = currentParent.parentElement;
 		}
 		return currentParent;
+	} else {
+		alert("No Parent found")
 	}
 };
 
 var getSongItem = function(element) {
-	
 	switch (element.className) {
 		case 'album-song-button' :
 		case 'ion-play' :
