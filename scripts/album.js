@@ -100,7 +100,7 @@ var getSongItem = function(element) {
 	switch (element.className) {
 		case 'album-song-button' :
 		case 'ion-play' :
-		case 'ion-play' :
+		case 'ion-pause' :
 			return findParentByClassName(element, 'song-item-number');
 		case 'album-view-song-item' :
 			return element.querySelector('.song-item-number');
@@ -111,7 +111,7 @@ var getSongItem = function(element) {
 			return element;
 		default :
 			return;
-	}
+	} 
 };
 
 var clickHandler = function(targetElement) {
