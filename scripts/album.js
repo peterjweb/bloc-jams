@@ -1,12 +1,3 @@
-var albumTitle = document.getElementsByClassName('album-view-title')[0],
-	albumArtist = document.getElementsByClassName('album-view-artist')[0],
-	albumReleaseInfo = document.getElementsByClassName('album-view-release-info')[0],
-	albumImage = document.getElementsByClassName('album-cover-art')[0],
-	albumSongList = document.getElementsByClassName('album-view-song-list')[0],
-	albumCover = document.getElementsByClassName('album-cover-art')[0],
-	songListContainer = document.getElementsByClassName('album-view-song-list')[0],
-	songRows = document.getElementsByClassName('album-view-song-item');
-	
 var albumPicasso = {
     title : "The Colors",
     artist : "Pablo Picasso",
@@ -65,29 +56,34 @@ var createSongRow = function(songNumber, songName, songLength) {
 		+'	<td class="song-item-number" data-song-number="' + songNumber + '">' + songNumber + '</td>'	
 		+'	<td class="song-item-title">' + songName + '</td>'
 		+'	<td class="song-item-duration">' + songLength + '</td>'
-		+'</tr>';
+		+'</tr>'
+		;
 		
-		return template;	
-},
-	playButtonTemplate = '<a class="album-song-button"><span class="ion-play"></span></a>',
-	pauseButtonTemplate = '<a class="album-song-button"><span class="ion-pause"></span></a>';
-	
+	return $(template);	
+};
 
 var setCurrentAlbum = function(album) {	
-	albumTitle.firstChild.nodeValue = album.title;
-	albumArtist.firstChild.nodeValue = album.artist;
-	albumReleaseInfo.firstChild.nodeValue = album.year + ' ' + album.label;
-	albumImage.setAttribute('src', album.albumArtUrl);
-	albumSongList.innerHTML = '';
+	var $albumTitle = $('.album-view-title'),
+		$albumArtist = $('.album-view-artist'),
+		$albumReleaseInfo = $('.album-view-release-info'),
+		$albumImage = $('.album-cover-art'),
+		$albumSongList = $('.album-view-song-list');
+	
+	$albumTitle.text(album.title);
+	$albumArtist.text(album.artist);
+	$albumReleaseInfo.text(album.year + ' ' + album.label);
+	$albumImage.attr('src', album.albumArtUrl);
+	
+	$albumSongList.empty();
 	
 	for (var i = 0; i < album.songs.length; i++) {
-		albumSongList.innerHTML += createSongRow(i +1, album.songs[i].title, album.songs[i].duration);
+		var $newRow = createSongRow(i +1, album.songs[i].title, album.songs[i].duration);
+		$albumSongList.append($newRow);
 	}
 };
 
 var findParentByClassName = function(element, targetClass) {
 	if (element.parentElement) {
-		
 		var currentParent = element.parentElement;
 		while (currentParent.className != targetClass && currentParent.className != null) {
 			currentParent = currentParent.parentElement;
@@ -98,7 +94,6 @@ var findParentByClassName = function(element, targetClass) {
 		} else {
 			alert("No parent found with that class name");
 		}
-		
 	} else {
 		alert("No Parent found");
 	}
@@ -139,9 +134,15 @@ var clickHandler = function(targetElement) {
 	}
 };
 
+var	albumCover = document.getElementsByClassName('album-cover-art')[0],
+	songListContainer = document.getElementsByClassName('album-view-song-list')[0],
+	songRows = document.getElementsByClassName('album-view-song-item');
+
 var albumArray = [albumPicasso, albumMarconi, albumQOTSA],
 	index = 1,
-	currentlyPlayingSong = null;
+	currentlyPlayingSong = null,
+	playButtonTemplate = '<a class="album-song-button"><span class="ion-play"></span></a>',
+	pauseButtonTemplate = '<a class="album-song-button"><span class="ion-pause"></span></a>';
 
 window.onload = function() {
 	setCurrentAlbum(albumPicasso);
