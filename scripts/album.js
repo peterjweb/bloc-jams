@@ -20,13 +20,19 @@ var createSongRow = function(songNumber, songName, songLength) {
 		if (currentlyPlayingSongNumber !== songNumber) {
 			$(this).html(pauseButtonTemplate);
 			setSong(songNumber);
+			currentSoundFile.play();
 			currentSongFromAlbum = currentAlbum.songs[songNumber - 1];
 			updatePlayerBarSong();
 		} else if (currentlyPlayingSongNumber === songNumber) {
-			$(this).html(playButtonTemplate);
-			$('.main-controls .play-pause').html(playerBarPlayButton);
-			currentlyPlayingSongNumber = null;
-			currentSongFromAlbum = null;
+			if (currentSoundFile.isPaused()) {
+				$(this).html(pauseButtonTemplate);
+				$('.main-controls .play-pause').html(playerBarPauseButton);	
+				currentSoundFile.play();
+			} else {
+				$(this).html(playButtonTemplate);
+				$('.main-controls .play-pause').html(playerBarPlayButton);
+				currentSoundFile.pause();
+			}
 		}
 	};
 	
@@ -80,9 +86,26 @@ var trackIndex = function(album, song) {
 };
 
 var setSong = function(songNumber) {
+	if (currentSoundFile) {
+		currentSoundFile.stop();
+	}
+	
 	currentlyPlayingSongNumber = parseInt(songNumber);
 	currentSongFromAlbum = currentAlbum.songs[songNumber - 1];
+	
+	currentSoundFile = new buzz.sound(currentSongFromAlbum.audioUrl, {
+		formats : ['mp3'],
+		preload : true
+	});
+	
+	setVolume(currentVolume);
 };
+
+var setVolume = function(volume) {
+	if (currentSoundFile) {
+		currentSoundFile.setVolume(volume);
+	}
+}
 
 var getSongNumberCell = function(number) {
 	return $('.song-item-number[data-song-number="' + number + '"]');
@@ -101,6 +124,7 @@ var nextSong = function() {
 	}
 	
 	setSong(currentSongIndex + 1);
+	currentSoundFile.play();
 	currentSongFromAlbum = currentAlbum.songs[currentSongIndex];
 	
 	$('.currently-playing .song-name').text(currentSongFromAlbum.title);
@@ -129,6 +153,7 @@ var previousSong = function() {
 	}
 	
 	setSong(currentSongIndex + 1);
+	currentSoundFile.play();
 	currentSongFromAlbum = currentAlbum.songs[currentSongIndex];
 	
 	$('.currently-playing .song-name').text(currentSongFromAlbum.title);
@@ -157,7 +182,9 @@ var	albumCover = document.getElementsByClassName('album-cover-art')[0],
 	
 var currentAlbum = null,  
 	currentlyPlayingSongNumber = null,
-	currentSongFromAlbum = null;
+	currentSongFromAlbum = null,
+	currentSoundFile = null,
+	currentVolume = 80;
 	
 var $previousButton = $('.main-controls .previous'),
 	$nextButton = $('.main-controls .next');
